@@ -1,4 +1,5 @@
 #include "../include/LSE.h"
+#include <stdio.h>
 
 Lista *criaLista() {
   Lista *li;
@@ -82,19 +83,55 @@ int removeFim(Lista *li) {
 }
 
 void imprimeLista(Lista *li) {
+  if (li == NULL) {
+    printf("Lista nula\n");
+    return;
+  }
+  if (listaVazia(li)) {
+    printf("Lista vazia\n");
+
+    return;
+  }
+  NO *aux = *li;
+
+  int size = tamanho(li);
+
+  int count = 0;
+  while (aux != NULL) {
+    printf("%d", aux->info);
+
+    if (count != size - 1) {
+      printf(" ");
+    }
+
+    aux = aux->prox;
+    count++;
+  }
+  printf("\n");
+}
+
+void imprimeListaArquivo(Lista *li, FILE *output_fp) {
   if (li == NULL)
     return;
   if (listaVazia(li)) {
-    printf("Lista Vazia!\n");
     return;
   }
-  printf("Elementos:\n");
   NO *aux = *li;
+
+  int size = tamanho(li);
+
+  int count = 0;
   while (aux != NULL) {
-    printf("%d ", aux->info);
+    fprintf(output_fp, "%d", aux->info);
+
+    if (count != size - 1) {
+      fprintf(output_fp, " ");
+    }
+
     aux = aux->prox;
+    count++;
   }
-  printf("\n");
+  fprintf(output_fp, "\n");
 }
 
 void recComplementar(NO *n) {

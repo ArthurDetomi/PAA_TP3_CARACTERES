@@ -19,7 +19,8 @@ void liberar_matriz_dp(int **matriz, int linhas) {
 
 int min(int v1, int v2) { return (v1 < v2) ? v1 : v2; }
 
-void solve_dp(char *texto, char *padrao, int num_erros, Lista *li, int **dp) {
+void buscar_casamentos_aproximados_dp(char *texto, char *padrao, int num_erros,
+                                      Lista *li, int **dp) {
   int tamanho_texto = strlen(texto);
   int tamanho_padrao = strlen(padrao);
 
@@ -50,20 +51,21 @@ void solve_dp(char *texto, char *padrao, int num_erros, Lista *li, int **dp) {
   }
 }
 
-SolucaoCasamento *encontrar_casamento_aproximados(char *texto, char *padrao,
-                                                  int num_erros) {
+SolucaoCasamento *encontrar_casamento_aproximados_dp(char *texto, char *padrao,
+                                                     int num_erros) {
   int **dp;
 
-  int n = strlen(texto);
-  int m = strlen(padrao);
+  int tamanho_texto = strlen(texto);
+  int tamanho_padrao = strlen(padrao);
 
-  alocar_matriz_dp(&dp, n + 1, m + 1);
+  alocar_matriz_dp(&dp, tamanho_padrao + 1, tamanho_texto + 1);
 
-  SolucaoCasamento *solucao = alocar_solucao_casamento();
+  SolucaoCasamento *solucao = alocar_solucao_casamento(padrao);
 
-  solve_dp(texto, padrao, num_erros, solucao->posicoesEncontradas, dp);
+  buscar_casamentos_aproximados_dp(texto, padrao, num_erros,
+                                   solucao->posicoesEncontradas, dp);
 
-  liberar_matriz_dp(dp, n);
+  liberar_matriz_dp(dp, tamanho_padrao + 1);
 
   return solucao;
 }

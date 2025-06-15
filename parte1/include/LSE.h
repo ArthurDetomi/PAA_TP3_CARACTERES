@@ -42,10 +42,14 @@ void imprimeRev(Lista *li);
 
 void destroiLista(Lista *li);
 
-/* Exercício 2.2 */
 int tamanho(Lista *li);
+
 int procura(Lista *li, int x);
+
 int insereOrdenado(Lista *li, int elem);
+
 int removePrimeiraOcorrencia(Lista *li, int elem);
+
+void imprimeListaArquivo(Lista *li, FILE *output_fp);
 
 #endif

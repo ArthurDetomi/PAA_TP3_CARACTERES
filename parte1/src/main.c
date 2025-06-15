@@ -1,67 +1,18 @@
 #include "../include/entrada.h"
+
+#include "../include/strategy_shiftand.h"
+#include "../include/strategydp.h"
+
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-#include "../include/LSE.h"
-
-int shift_and(char *padrao, char *texto, int num_erros,
-              Lista *posicoes_encontradas) {
-  int tamanho_texto = strlen(texto);
-  int tamanho_padrao = strlen(padrao);
-
-  unsigned int mascaras_bits[256];
-
-  for (int i = 0; i < 256; i++) {
-    mascaras_bits[i] = 0;
-  }
-
-  for (int i = 0; i < tamanho_padrao; i++) {
-    unsigned char c = padrao[i];
-
-    mascaras_bits[c] |= (1 << i);
-  }
-
-  unsigned int estados[num_erros + 1];
-  unsigned int Rnovo[num_erros + 1];
-
-  estados[0] = 0;
-  for (int j = 1; j <= num_erros; j++) {
-    estados[j] = (1 << j) - 1;
-  }
-
-  for (int i = 0; i < tamanho_texto; i++) {
-    unsigned char c = texto[i];
-
-    Rnovo[0] = ((estados[0] << 1) | 1) & mascaras_bits[c];
-
-    for (int j = 1; j <= num_erros; j++) {
-      Rnovo[j] = ((estados[j] << 1) | 1) & mascaras_bits[c];
-      Rnovo[j] |= (estados[j - 1] << 1);
-      Rnovo[j] |= estados[j - 1];
-      Rnovo[j] |= Rnovo[j - 1];
-    }
-
-    for (int j = 0; j <= num_erros; j++) {
-      estados[j] = Rnovo[j];
-    }
-
-    if (estados[num_erros] & (1 << (tamanho_padrao - 1))) {
-      int posicao_encontrada = (i - tamanho_padrao + 1) + 1;
-
-      insereFim(posicoes_encontradas, posicao_encontrada);
-    }
-  }
-
-  return 0;
-}
-
-int temp(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
   // Verifica se os argumentos de linha de comando são válidos
   if (!is_argumentos_validos(argc, argv)) {
     printf("Erro: Parâmetros inválidos.\n");
-    printf("Uso correto: ./tp3_parte1 {estrateǵia} -i input/texto "
+    printf("Uso correto: ./tp3_parte1 {estrategia} {qtd_erros} -i input/texto "
            "input/padroes -o saida.txt\n");
+    printf("Onde {qtdErros} deve ser menor que o tamanho do padrao\n");
     printf("Onde '-i' indica os arquivos de entrada.\n");
     printf("Onde '-o' indica o arquivo de saída (Opcional)\n");
     printf(
@@ -92,9 +43,35 @@ int temp(int argc, char *argv[]) {
     return 1;
   }
 
+  int qtd_erros = atoi(argv[QTD_ERROS_P]);
+
   int estrategia_escolhida = atoi(argv[ESTRATEGIA_P]);
 
-  // TODO:Fazer a lógica principal do programa ...
+  char linha[1024];
+  char texto[10000];
+  texto[0] = '\0';
+
+  while (fgets(linha, sizeof(linha), input_text_fp)) {
+    strcat(texto, linha);
+  }
+
+  char padrao[100];
+  while (fscanf(input_patterns_fp, "%s", padrao) == 1) {
+    SolucaoCasamento *solucao = NULL;
+    switch (estrategia_escolhida) {
+    case SHIFT_AND:
+      solucao = encontrar_casamento_aproximados_sa(texto, padrao, qtd_erros);
+      break;
+    case PROGRAMACAO_DINAMICA:
+      solucao = encontrar_casamento_aproximados_dp(texto, padrao, qtd_erros);
+      break;
+    }
+
+    escrever_solucao_casamento_terminal(solucao);
+    escrever_solucao_casamento_arquivo(solucao, output_fp);
+
+    destroi_solucao_casamento(&solucao);
+  }
 
   // Fechar todos os arquivos utilizados
   fclose(input_text_fp);
@@ -102,25 +79,4 @@ int temp(int argc, char *argv[]) {
   fclose(output_fp);
 
   return 0;
-}
-
-
-
-
-int main() {
-  Lista *resposta = criaLista();
-  shift_and("palavras",
-            "Texto exemplo, texto tem palavras, palavras exercem fascínio.", 0,
-            resposta);
-
-  imprimeLista(resposta);
-
-  Lista *resposta2 = criaLista();
-  solve_dp("Texto exemplo, texto tem palavras, palavras exercem fascínio.",
-           "palavras", 0, resposta2);
-
-  imprimeLista(resposta2);
-
-  destroiLista(resposta);
-  destroiLista(resposta2);
 }
