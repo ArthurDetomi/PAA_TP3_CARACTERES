@@ -2,6 +2,7 @@
 
 #include "../include/strategy_shiftand.h"
 #include "../include/strategydp.h"
+#include "../include/tempo.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -55,8 +56,17 @@ int main(int argc, char *argv[]) {
     strcat(texto, linha);
   }
 
+  // Inicia o temporizador para medir o tempo total de execução
+  Temporizador tempo_total;
+  iniciarTemporizador(&tempo_total);
+
+  int qtdPadroes = 0;
+
   char padrao[100];
   while (fscanf(input_patterns_fp, "%s", padrao) == 1) {
+    Temporizador tempo_teste;
+    iniciarTemporizador(&tempo_teste);
+
     SolucaoCasamento *solucao = NULL;
     switch (estrategia_escolhida) {
     case SHIFT_AND:
@@ -67,11 +77,27 @@ int main(int argc, char *argv[]) {
       break;
     }
 
+    // Finaliza a medição de tempo para este teste
+    finalizarTemporizador(&tempo_teste);
+
+    // Escreve nas saidas respectivas
+    printf("\tTeste com padrão %d\n", ++qtdPadroes);
+    printf("Solução:\n");
     escrever_solucao_casamento_terminal(solucao);
     escrever_solucao_casamento_arquivo(solucao, output_fp);
+    printf("\n");
+    imprimirTempos(&tempo_teste);
+    printf("------------------------\n");
 
     destroi_solucao_casamento(&solucao);
   }
+
+  // Finaliza a medição do tempo total de execução
+  finalizarTemporizador(&tempo_total);
+
+  // Exibe o tempo total de execução do programa
+  printf("Tempo total de execução:\n");
+  imprimirTempos(&tempo_total);
 
   // Fechar todos os arquivos utilizados
   fclose(input_text_fp);
