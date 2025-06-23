@@ -7,6 +7,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#define MAX_TAM_TEXTO 100000
+#define MAX_TAM_LINHA 2048
+#define MAX_TAM_OUTPUT_PATH 80
+#define MAX_TAM_PADRAO 120
+
 int main(int argc, char *argv[]) {
   // Verifica se os argumentos de linha de comando são válidos
   if (!is_argumentos_validos(argc, argv)) {
@@ -34,7 +39,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Obtém o caminho de arquivo de saída através dos argumentos
-  char output_path[80];
+  char output_path[MAX_TAM_OUTPUT_PATH];
   get_output_path(argc, argv, output_path);
 
   FILE *output_fp = fopen(output_path, "w");
@@ -48,8 +53,8 @@ int main(int argc, char *argv[]) {
 
   int estrategia_escolhida = atoi(argv[ESTRATEGIA_P]);
 
-  char linha[1024];
-  char texto[10000];
+  char linha[MAX_TAM_LINHA];
+  char texto[MAX_TAM_TEXTO];
   texto[0] = '\0';
 
   while (fgets(linha, sizeof(linha), input_text_fp)) {
@@ -62,7 +67,7 @@ int main(int argc, char *argv[]) {
 
   int qtdPadroes = 0;
 
-  char padrao[100];
+  char padrao[MAX_TAM_PADRAO];
   while (fscanf(input_patterns_fp, "%s", padrao) == 1) {
     Temporizador tempo_teste;
     iniciarTemporizador(&tempo_teste);
