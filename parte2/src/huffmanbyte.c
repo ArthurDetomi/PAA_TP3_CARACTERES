@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Gera pesos aleatórios para cada posição de caracter
 void gera_pesos(TipoPesos p) {
   int i;
   for (i = 0; i < N; i++)
@@ -19,6 +20,7 @@ TipoIndice h(TipoChave chave, TipoPesos p) {
   return (soma % M);
 }
 
+// Inicializa a tabela hash
 void inicializa(TipoDicionario T) {
   int i;
   for (i = 0; i < M; i++) {
@@ -27,6 +29,7 @@ void inicializa(TipoDicionario T) {
   }
 }
 
+// Retorna a posição se encontrar, ou M se a chave não existir na tabela.
 TipoApontador pesquisa(TipoChave chave, TipoPesos p, TipoDicionario T) {
   unsigned int i = 0, inicial = h(chave, p);
   while (strcmp(T[(inicial + i) % M].chave, VAZIO) != 0 &&
@@ -57,7 +60,7 @@ void insere(TipoItem *x, TipoPesos p, TipoDicionario T) {
     printf(" Tabela cheia\n");
 }
 
-/* Inicio dos procedimentos do Extrator */
+// Marca quais caracteres são considerados válidos para formar palavras.
 void define_alfabeto(TipoAlfabeto alfabeto, FILE *arqAlf) {
   char simbolos[MAXALFABETO + 1];
   int i;
@@ -73,8 +76,10 @@ void define_alfabeto(TipoAlfabeto alfabeto, FILE *arqAlf) {
   alfabeto[0] = FALSE; /* caractere de codigo zero: separador */
 }
 
+// Extrai próxima palavra da linha atual. Se linha acabar, lê outra do arquivo.
+// Usa a tabela do alfabeto para identificar separadores.
 void extrai_proxima_palavra(TipoPalavra result, int *tipo_indice, char *linha,
-                          FILE *arq_txt, TipoAlfabeto alfabeto) {
+                            FILE *arq_txt, TipoAlfabeto alfabeto) {
   short fim_palavra = FALSE, aux = FALSE;
   result[0] = '\0';
   if (*tipo_indice > strlen(linha)) {
@@ -129,8 +134,8 @@ char *trim(char *str) {
 
 /* Procedimentos da Compressao e Descompressao */
 void primeira_etapa(FILE *ArqTxt, TipoAlfabeto Alfabeto, int *TipoIndice,
-                   TipoPalavra Palavra, char *Linha, TipoDicionario Vocabulario,
-                   TipoPesos p) {
+                    TipoPalavra Palavra, char *Linha,
+                    TipoDicionario Vocabulario, TipoPesos p) {
   TipoItem Elemento;
   int i;
   char *PalavraTrim = NULL;
@@ -165,6 +170,13 @@ void primeira_etapa(FILE *ArqTxt, TipoAlfabeto Alfabeto, int *TipoIndice,
   } while (Palavra[0] != '\0');
 }
 
+/*
+  Constrói a árvore de Huffman generalizada.
+
+  Fase 1: cria nodos internos somando frequências.
+  Fase 2: calcula profundidade da árvore.
+  Fase 3: define comprimento dos códigos com base na profundidade.
+*/
 void calcula_comp_codigo(TipoDicionario A, int n) {
   int u = 0; /* Nodos internos usados */
   int h = 0; /* Altura da arvore */
@@ -298,8 +310,8 @@ int le_num_int(FILE *arqComprimido) {
   return Num;
 }
 
-int constroi_vetores(TipoVetoresBO vetoresBaseOffset, TipoDicionario vocabulario,
-                    int n, FILE *arqComprimido) {
+int constroi_vetores(TipoVetoresBO vetoresBaseOffset,
+                     TipoDicionario vocabulario, int n, FILE *arqComprimido) {
   int Wcs[MAXTAMVETORESDO + 1];
   int i;
   int max_comp_cod = vocabulario[n].freq;
@@ -328,8 +340,13 @@ int constroi_vetores(TipoVetoresBO vetoresBaseOffset, TipoDicionario vocabulario
   return max_comp_cod;
 }
 
+/*Segunda etapa da compressão:
+// Ordena o vocabulário por frequência, calcula os comprimentos de código,
+// e grava o vocabulário e os vetores em disco.
+// Em seguida, reconstroi a tabela de hash a partir do vocabulário serializado.
+*/
 int segunda_etapa(TipoDicionario Vocabulario, TipoVetoresBO VetoresBaseOffset,
-                 TipoPesos p, FILE *ArqComprimido) {
+                  TipoPesos p, FILE *ArqComprimido) {
   int Result, i, j, num_nodos_folhas, PosArq;
   TipoItem elemento;
   char Ch;
@@ -337,7 +354,7 @@ int segunda_etapa(TipoDicionario Vocabulario, TipoVetoresBO VetoresBaseOffset,
   num_nodos_folhas = ordena_por_frequencia(Vocabulario);
   calcula_comp_codigo(Vocabulario, num_nodos_folhas);
   Result = constroi_vetores(VetoresBaseOffset, Vocabulario, num_nodos_folhas,
-                           ArqComprimido);
+                            ArqComprimido);
   /* Grava Vocabulario */
   grava_num_int(ArqComprimido, num_nodos_folhas);
   PosArq = ftell(ArqComprimido);
@@ -392,10 +409,17 @@ int codifica(TipoVetoresBO vetoresBaseOffset, int ordem, int *c,
   return (ordem - vetoresBaseOffset[*c].offset + vetoresBaseOffset[*c].base);
 }
 
-void TerceiraEtapa(FILE *ArqTxt, TipoAlfabeto Alfabeto, int *TipoIndice,
-                   TipoPalavra Palavra, char *Linha, TipoDicionario Vocabulario,
-                   TipoPesos p, TipoVetoresBO VetoresBaseOffset,
-                   FILE *ArqComprimido, int MaxCompCod) {
+/*
+  Terceira etapa da compressão:
+  Lê o texto novamente e escreve os códigos compactados no arquivo.
+  Usa o vocabulário e os vetores base-offset para converter palavras em
+  códigos.
+*/
+void terceira_etapa(FILE *ArqTxt, TipoAlfabeto Alfabeto, int *TipoIndice,
+                    TipoPalavra Palavra, char *Linha,
+                    TipoDicionario Vocabulario, TipoPesos p,
+                    TipoVetoresBO VetoresBaseOffset, FILE *ArqComprimido,
+                    int MaxCompCod) {
   TipoApontador Pos;
   TipoChave Chave;
   char *PalavraTrim = NULL;
@@ -435,6 +459,10 @@ void TerceiraEtapa(FILE *ArqTxt, TipoAlfabeto Alfabeto, int *TipoIndice,
   }
 }
 
+/*
+  Realiza a compressão como um todo:
+  Executa as três etapas (vocabulário, codificação, escrita).
+*/
 void compressao(FILE *arqTxt, FILE *arqAlf, FILE *arqComprimido) {
   TipoAlfabeto Alfabeto;
   TipoPalavra Palavra, Linha;
@@ -453,8 +481,8 @@ void compressao(FILE *arqTxt, FILE *arqAlf, FILE *arqComprimido) {
   fseek(arqTxt, 0, SEEK_SET); /* Move cursor para inicio do arquivo*/
   Ind = 1;
   *Linha = '\0';
-  TerceiraEtapa(arqTxt, Alfabeto, &Ind, Palavra, Linha, Vocabulario, p,
-                VetoresBaseOffset, arqComprimido, MaxCompCod);
+  terceira_etapa(arqTxt, Alfabeto, &Ind, Palavra, Linha, Vocabulario, p,
+                 VetoresBaseOffset, arqComprimido, MaxCompCod);
   free(Vocabulario);
   free(VetoresBaseOffset);
 }
@@ -487,6 +515,7 @@ int le_vocabulario(FILE *arqComprimido, TipoVetorPalavra vocabulario) {
   return num_nodos_folhas;
 }
 
+// Versão do Boyer-Moore-Horspool adaptada para padrões em forma compactada
 void bmh_byte(TipoTexto T, int n, TipoPadrao P, int m,
               SolucaoCasamento *solucao) {
   int i, j, k, d[MAXCHAR + 1];
@@ -530,6 +559,8 @@ void atribui(TipoPadrao P, int Codigo, int c) {
   }
 }
 
+// Realiza busca no texto já comprimido buscando casamento exato com o BMH
+// adaptado
 SolucaoCasamento *processar_padrao(TipoPadrao padrao,
                                    TipoVetorPalavra vocabulario,
                                    int NumNodosFolhas,
@@ -558,6 +589,7 @@ SolucaoCasamento *processar_padrao(TipoPadrao padrao,
   return solucao;
 }
 
+// Comprimi o arquivo de entrada
 void comprimir_arquivo_entrada(char *arq_input_name) {
   FILE *arq_comprimido = fopen(ARQ_COMP_PATH, "w+b");
   FILE *arq_alfabeto = fopen(ARQ_ALF_PATH, "r");
