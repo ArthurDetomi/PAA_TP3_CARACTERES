@@ -103,13 +103,15 @@ Executável: `./tp3_parte2`
 # Executa busca exata com BMH no arquivo original e salva em resultado.txt
 ```
 
+---
+
 ## 📚 Documentação
 
-🔗 [Repositório GitHub](https://github.com/ArthurDetomi/PAA_TP3_CARACTERES)
+🔗 [Acesse este repositório no GitHub](https://github.com/ArthurDetomi/PAA_TP3_CARACTERES)
 
-📄 Documentação:
+- A documentação segue-se no diretorio /docs
 
-- [`/docs/tp3.pdf`](/docs/tp3.pdf)
+[Instruções](/docs/tp3.pdf)
 
 ---
 
