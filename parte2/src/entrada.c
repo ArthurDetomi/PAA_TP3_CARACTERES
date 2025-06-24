@@ -11,7 +11,7 @@ bool is_argumentos_validos(int argc, char *argv[]) {
     return false;
   }
 
-  int option = (int)atoi(argv[FLAG_OPTION_P]);
+  int option = atoi(argv[FLAG_OPTION_P]);
 
   if (option != ARQ_COMPRIMIDO_TEST && option != ARQ_DESCOMPRIMIDO_TEST) {
     return false;

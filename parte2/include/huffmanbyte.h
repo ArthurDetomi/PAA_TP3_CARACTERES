@@ -29,53 +29,56 @@ typedef char TipoPadrao[MAXTAMPADRAO + 1];
 typedef int TipoApontador;
 typedef char TipoChave[N + 1];
 typedef int TipoPesos[N + 1];
+
 typedef struct TipoItem {
-  TipoChave Chave;
-  /* outros componentes */
-  int Freq, Ordem;
+    TipoChave chave;
+    int freq, ordem;
 } TipoItem;
+
 typedef int TipoIndice;
 typedef TipoItem *TipoDicionario;
 typedef short TipoAlfabeto[MAXALFABETO + 1];
+
 typedef struct TipoBaseOffset {
-  int Base, Offset;
+    int base, offset;
 } TipoBaseOffset;
+
 typedef TipoBaseOffset *TipoVetoresBO;
 typedef char TipoPalavra[256];
 typedef TipoPalavra *TipoVetorPalavra;
 
 /* Inicio dos procedimentos do Extrator */
-void DefineAlfabeto(TipoAlfabeto Alfabeto, FILE *ArqAlf);
+void define_alfabeto(TipoAlfabeto alfabeto, FILE *arqAlf);
 
 /* Procedimento para gravar um numero inteiro em um arquivo de bytes */
-void GravaNumInt(FILE *ArqComprimido, int Num);
+void grava_num_int(FILE *arqComprimido, int num);
 
 /* Procedimento para ler um numero inteiro de um arquivo de bytes */
-int LeNumInt(FILE *ArqComprimido);
+int le_num_int(FILE *arqComprimido);
 
-int ConstroiVetores(TipoVetoresBO VetoresBaseOffset, TipoDicionario Vocabulario,
-                    int n, FILE *ArqComprimido);
+int constroi_vetores(TipoVetoresBO vetoresBaseOffset, TipoDicionario vocabulario,
+                     int n, FILE *arqComprimido);
 
-void Escreve(FILE *ArqComprimido, int *Codigo, int *c);
+void escreve(FILE *ArqComprimido, int *Codigo, int *c);
 
-int Codifica(TipoVetoresBO VetoresBaseOffset, int Ordem, int *c,
-             int MaxCompCod);
+int codifica(TipoVetoresBO vetoresBaseOffset, int ordem, int *c,
+             int maxCompCod);
 
-void Compressao(FILE *ArqTxt, FILE *ArqAlf, FILE *ArqComprimido);
+void compressao(FILE *arqTxt, FILE *arqAlf, FILE *arqComprimido);
 
-int LeVetores(FILE *ArqComprimido, TipoBaseOffset *VetoresBaseOffset);
+int le_vetores(FILE *arqComprimido, TipoBaseOffset *vetoresBaseOffset);
 
-int LeVocabulario(FILE *ArqComprimido, TipoVetorPalavra Vocabulario);
+int le_vocabulario(FILE *arqComprimido, TipoVetorPalavra vocabulario);
 
 void bmh_byte(TipoTexto T, int n, TipoPadrao P, int m,
               SolucaoCasamento *solucao);
 
-void Atribui(TipoPadrao P, int Codigo, int c);
+void atribui(TipoPadrao P, int Codigo, int c);
 
 SolucaoCasamento *processar_padrao(TipoPadrao padrao,
-                                   TipoVetorPalavra Vocabulario,
+                                   TipoVetorPalavra vocabulario,
                                    int NumNodosFolhas,
-                                   TipoVetoresBO VetoresBaseOffset,
+                                   TipoVetoresBO vetoresBaseOffset,
                                    int MaxCompCod, TipoTexto T, int n);
 
 void comprimir_arquivo_entrada(char *arq_input_name);

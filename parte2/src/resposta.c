@@ -5,7 +5,7 @@
 
 SolucaoCasamento *alocar_solucao_casamento(char *padrao) {
   SolucaoCasamento *solucao =
-      (SolucaoCasamento *)malloc(sizeof(SolucaoCasamento));
+      malloc(sizeof(SolucaoCasamento));
 
   solucao->padrao = (char *)malloc(strlen(padrao) + 1);
   solucao->qtd_comparacoes = 0;

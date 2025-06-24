@@ -47,57 +47,65 @@ int main(int argc, char *argv[]) {
 
   if (option_escolhida == ARQ_COMPRIMIDO_TEST) {
     // Teste com arquivo comprimido
+
+    // Comprimi o arquivo de entrada
     comprimir_arquivo_entrada(input_text_path);
 
     TipoAlfabeto alfabeto;
-    int maxCompCod, numNodosFolhas;
+    int max_comp_cod, num_nodos_folhas;
     TipoVetorPalavra vocabulario =
-        (TipoVetorPalavra)calloc(M + 1, sizeof(TipoPalavra));
+        calloc(M + 1, sizeof(TipoPalavra));
     TipoVetoresBO vetoresBaseOffset =
-        (TipoVetoresBO)calloc(MAXTAMVETORESDO + 1, sizeof(TipoBaseOffset));
-    TipoPalavra p;
-    TipoTexto T;
-    memset(T, 0, sizeof T);
+        calloc(MAXTAMVETORESDO + 1, sizeof(TipoBaseOffset));
+    TipoTexto texto;
+    memset(texto, 0, sizeof texto);
 
-    int n = 1;
+    int tamanho_texto_comprimido = 1;
 
+    // Abre o arquivo já comprimido para leitura
     FILE *arq_comprimido = fopen(ARQ_COMP_PATH, "r+b");
 
     if (arq_comprimido == NULL) {
-      printf("Erro ao abrir arquivo comprimido\n");
+      perror("Erro ao abrir arquivo comprimido\n");
       exit(1);
     }
 
     FILE *arq_alfabeto = fopen(ARQ_ALF_PATH, "r");
 
-    DefineAlfabeto(alfabeto, arq_alfabeto); /*Le alfabeto definido em arquivo*/
-    maxCompCod = LeVetores(arq_comprimido, vetoresBaseOffset);
-    numNodosFolhas = LeVocabulario(arq_comprimido, vocabulario);
+    // Lê o alfabeto definido no arquivo
+    define_alfabeto(alfabeto, arq_alfabeto);
 
-    while (fread(&T[n], sizeof(char), 1, arq_comprimido))
-      n++;
+    max_comp_cod = le_vetores(arq_comprimido, vetoresBaseOffset);
+    num_nodos_folhas = le_vocabulario(arq_comprimido, vocabulario);
+
+    while (fread(&texto[tamanho_texto_comprimido], sizeof(char), 1, arq_comprimido)) {
+      tamanho_texto_comprimido++;
+    }
 
     // Inicia o temporizador para medir o tempo total de execução
     Temporizador tempo_total;
     iniciarTemporizador(&tempo_total);
-    int qtdPadroes = 0;
+    int qtd_padroes = 0;
 
     TipoPadrao padrao;
 
     FILE *output_comp_fp = fopen("output/teste_arq_comp", "w");
 
+    // Para cada padrão faça:
     while (fscanf(input_patterns_fp, "%s", padrao) == 1) {
       Temporizador tempo_teste;
       iniciarTemporizador(&tempo_teste);
 
+      // Procura o padrão no texto comprimido
       SolucaoCasamento *solucao =
-          processar_padrao(padrao, vocabulario, numNodosFolhas,
-                           vetoresBaseOffset, maxCompCod, T, n);
+          processar_padrao(padrao, vocabulario, num_nodos_folhas,
+                           vetoresBaseOffset, max_comp_cod, texto, tamanho_texto_comprimido);
+
       // Finaliza a medição de tempo para este teste
       finalizarTemporizador(&tempo_teste);
 
       // Escreve nas saidas respectivas
-      printf("\tTeste com padrão %d\n", ++qtdPadroes);
+      printf("\tTeste com padrão %d\n", ++qtd_padroes);
       printf("Solução:\n");
       escrever_solucao_casamento_terminal(solucao);
       escrever_solucao_casamento_arquivo(solucao, output_fp);
@@ -128,6 +136,7 @@ int main(int argc, char *argv[]) {
 
     char linha[MAX_TAM_LINHA];
 
+    // Extraindo texto do arquivo de entrada
     while (fgets(linha, sizeof(linha), input_text_fp)) {
       strcat(texto, linha);
     }
@@ -139,10 +148,13 @@ int main(int argc, char *argv[]) {
     int qtdPadroes = 0;
 
     TipoPadrao padrao;
+
+    // Para cada padrão faça:
     while (fscanf(input_patterns_fp, "%s", padrao) == 1) {
       Temporizador tempo_teste;
       iniciarTemporizador(&tempo_teste);
 
+      // Busca o padrão no texto descomprimido original
       SolucaoCasamento *solucao = buscar_arquivo_descomprimido(texto, padrao);
 
       // Finaliza a medição de tempo para este teste

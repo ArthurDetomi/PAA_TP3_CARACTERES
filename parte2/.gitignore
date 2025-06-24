@@ -7,3 +7,7 @@ resultado_teste_planilha/*.csv
 tp2
 output/*.txt
 output/*.csv
+/.idea/vcs.xml
+/.idea/misc.xml
+/.idea/editor.xml
+/.idea/.gitignore

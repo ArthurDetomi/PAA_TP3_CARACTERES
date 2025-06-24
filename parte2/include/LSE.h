@@ -1,8 +1,3 @@
-/*----------------- File: LSE.h  ----------------------+
-|Lista Simplesmente Encadeada                           |
-| | | | | Implementado por Guilherme C. Pena em 14/09/2023      |
-+-------------------------------------------------------+ */
-
 #ifndef LISTASE_H
 #define LISTASE_H
 
