@@ -11,7 +11,7 @@ bool is_argumentos_validos(int argc, char *argv[]) {
     return false;
   }
 
-  int estrategia = (int)atoi(argv[ESTRATEGIA_P]);
+  int estrategia = atoi(argv[ESTRATEGIA_P]);
 
   if (estrategia != PROGRAMACAO_DINAMICA && estrategia != SHIFT_AND) {
     return false;

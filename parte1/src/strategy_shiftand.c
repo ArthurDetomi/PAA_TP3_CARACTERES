@@ -53,11 +53,6 @@ int shift_and(char *padrao, char *texto, int num_erros,
 
 SolucaoCasamento *encontrar_casamento_aproximados_sa(char *texto, char *padrao,
                                                      int num_erros) {
-  int **dp;
-
-  int tamanho_texto = strlen(texto);
-  int tamanho_padrao = strlen(padrao);
-
   SolucaoCasamento *solucao = alocar_solucao_casamento(padrao);
 
   shift_and(padrao, texto, num_erros, solucao->posicoesEncontradas);
