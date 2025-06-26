@@ -52,18 +52,25 @@ make clean
 Executável: `./tp3_parte1`
 
 ```bash
-./tp3_parte1 {estratégia} -i input/entrada.txt input/padroes.txt -o output/saida.txt
+./tp3_parte1 {estratégia} {qtd_erros} -i input/entrada.txt input/padroes.txt -o output/saida.txt
 ```
 
-**Parâmetros:**
+#### Parâmetros obrigatórios:
 
-- `{estratégia}`:
+- `{estratégia}`: Define o algoritmo utilizado para busca.
 
   - `1` → Programação Dinâmica
   - `2` → Shift-And
 
-- `-i` é **obrigatório** com dois arquivos: texto e padrões.
-- `-o` é **opcional**. Se omitido, gera `output/output.txt`.
+- `{qtd_erros}`: Quantidade máxima de erros permiidos no casamento. Deve ser um número inteiro não negativo, **menor que o tamanho do padrão**.
+
+- `-i`: Indica os arquivos de entrada. Deve ser seguido por dois caminhos:
+  1. Arquivo de texto (`entrada.txt`)
+  2. Arquivo contendo os padrões (`padroes.txt`)
+
+#### Parâmetro opcional:
+
+- `-o`: Define o caminho do arquivo de saída. Se omitido, o padrão será `output/output.txt`.
 
 ---
 
@@ -90,11 +97,11 @@ Executável: `./tp3_parte2`
 ### Exemplos de execução
 
 ```bash
-./tp3_parte1 2 -i input/texto.txt input/padroes.txt
-# Executa busca aproximada com Programação dinâmica
+./tp3_parte1 1 0 -i input/texto.txt input/padroes.txt
+# Executa busca aproximada com Programação dinâmica permitindo até 0 erros
 
-./tp3_parte1 2 -i input/texto.txt input/padroes.txt
-# Executa busca aproximada com Shift-And
+./tp3_parte1 2 0 -i input/texto.txt input/padroes.txt
+# Executa busca aproximada com Shift-And permitindo 0 erros
 
 ./tp3_parte2 1 -i input/texto.txt input/padroes.txt -o resultado.txt
 # Executa busca exata com BMH no arquivo comprimido e salva em resultado.txt
