@@ -13,7 +13,6 @@ A solução foi implementada para comparar o desempenho de diferentes algoritmos
 Antes de começar, certifique-se de que:
 
 - Você tem um compilador C instalado (como o `gcc`) e o utilitário `make`.
-- Está utilizando um sistema Linux compatível com os laboratórios do DCOMP.
 - Leu este README até o final para entender como compilar e executar o projeto.
 
 ---
@@ -119,6 +118,7 @@ Executável: `./tp3_parte2`
 - A documentação segue-se no diretorio /docs
 
 [Instruções](/docs/tp3.pdf)
+[Documentação](/docs/Documentação%20TP3%20-%20Oscar%20e%20Geraldo.pdf)
 
 ---
 
