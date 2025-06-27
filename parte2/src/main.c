@@ -53,8 +53,7 @@ int main(int argc, char *argv[]) {
 
     TipoAlfabeto alfabeto;
     int max_comp_cod, num_nodos_folhas;
-    TipoVetorPalavra vocabulario =
-        calloc(M + 1, sizeof(TipoPalavra));
+    TipoVetorPalavra vocabulario = calloc(M + 1, sizeof(TipoPalavra));
     TipoVetoresBO vetoresBaseOffset =
         calloc(MAXTAMVETORESDO + 1, sizeof(TipoBaseOffset));
     TipoTexto texto;
@@ -78,7 +77,8 @@ int main(int argc, char *argv[]) {
     max_comp_cod = le_vetores(arq_comprimido, vetoresBaseOffset);
     num_nodos_folhas = le_vocabulario(arq_comprimido, vocabulario);
 
-    while (fread(&texto[tamanho_texto_comprimido], sizeof(char), 1, arq_comprimido)) {
+    while (fread(&texto[tamanho_texto_comprimido], sizeof(char), 1,
+                 arq_comprimido)) {
       tamanho_texto_comprimido++;
     }
 
@@ -89,17 +89,15 @@ int main(int argc, char *argv[]) {
 
     TipoPadrao padrao;
 
-    FILE *output_comp_fp = fopen("output/teste_arq_comp", "w");
-
     // Para cada padrão faça:
     while (fscanf(input_patterns_fp, "%s", padrao) == 1) {
       Temporizador tempo_teste;
       iniciarTemporizador(&tempo_teste);
 
       // Procura o padrão no texto comprimido
-      SolucaoCasamento *solucao =
-          processar_padrao(padrao, vocabulario, num_nodos_folhas,
-                           vetoresBaseOffset, max_comp_cod, texto, tamanho_texto_comprimido);
+      SolucaoCasamento *solucao = processar_padrao(
+          padrao, vocabulario, num_nodos_folhas, vetoresBaseOffset,
+          max_comp_cod, texto, tamanho_texto_comprimido);
 
       // Finaliza a medição de tempo para este teste
       finalizarTemporizador(&tempo_teste);
@@ -126,7 +124,6 @@ int main(int argc, char *argv[]) {
     printf("Tempo total de execução:\n");
     imprimirTempos(&tempo_total);
 
-    fclose(output_comp_fp);
     fclose(arq_alfabeto);
     fclose(arq_comprimido);
   } else {
