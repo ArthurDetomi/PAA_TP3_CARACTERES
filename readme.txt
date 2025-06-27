@@ -118,6 +118,7 @@ Executável: `./tp3_parte2`
 - A documentação segue-se no diretorio /docs
 
 [Instruções](/docs/tp3.pdf)
+
 [Documentação](/docs/Documentação%20TP3%20-%20Oscar%20e%20Geraldo.pdf)
 
 ---
